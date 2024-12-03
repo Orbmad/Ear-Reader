@@ -15,21 +15,24 @@ public final class DAOUtils {
             var port = "3306";
             var connectionString = "jdbc:mysql://" + host + ":" + port + "/" + database;
             return DriverManager.getConnection(connectionString, username, password);
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new DAOException(e);
         }
     }
 
-    /*Prepares the a statement with the query string and insert the values in it. */
-    public static PreparedStatement prepare(final Connection connection, final String query, final Object... values) throws SQLException {
+    /*
+     * Prepares the a statement with the query string and insert the values in it.
+     */
+    public static PreparedStatement prepare(final Connection connection, final String query, final Object... values)
+            throws SQLException {
         PreparedStatement statement = null;
         try {
             statement = connection.prepareStatement(query);
-            for (int i=0; i < values.length; i++) {
+            for (int i = 0; i < values.length; i++) {
                 statement.setObject(i + 1, values[i]);
             }
             return statement;
-        } catch(Exception e) {
+        } catch (Exception e) {
             if (statement != null) {
                 statement.close();
             }
