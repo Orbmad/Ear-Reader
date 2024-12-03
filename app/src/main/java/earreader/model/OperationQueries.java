@@ -14,13 +14,17 @@ public class OperationQueries {
     """
     INSERT INTO AcquistiCap(Numero, CodiceTesto, Email)
     VALUES (?, ?, ?);
+    """;
+
+    public static final String UPDATE_USER_COINS =
+    """
     UPDATE Utenti
     SET EarCoins = EarCoins - (
         SELECT T.Costo
         FROM Testi T
         WHERE T.Codice = ?
     )
-    WHERE Email = ?;
+    WHERE Email = ?;      
     """;
 
     //OP03
@@ -28,6 +32,10 @@ public class OperationQueries {
     """
     INSERT INTO Valutazioni(Email, CodiceTesto, Voto, Titolo, Stringa)
     VALUES (?, ?, ?, ?);
+    """;
+
+    public static final String UPDATE_TEXT_RANK =
+    """
     UPDATE Testi
     SET Voto = (
         SELECT AVG(Voto)
@@ -35,6 +43,10 @@ public class OperationQueries {
         WHERE CodiceTesto = ?
     )
     WHERE Codice = ?;
+    """;
+
+    public static final String UPDATE_AUTHOR_RANK =
+    """
     UPDATE Autori A
     SET Punteggio = (
         SELECT AVG(T.Voto)
@@ -46,7 +58,7 @@ public class OperationQueries {
         SELECT S1.CodiceAutore
         FROM Testi T1, Scritture S1
         WHERE T1.Codice = ?
-    );
+    );      
     """;
 
     //OP04
