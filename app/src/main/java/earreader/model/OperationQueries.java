@@ -83,16 +83,20 @@ public class OperationQueries {
     public static final String BUY_NEW_CURRENCY =
     """
         INSERT INTO Pagamenti(CodicePagamento, Email, Data, EarCoins, CodiceMetodo, CodiceSconto)
-        VALUES(?, ?, ?, ?, ?, ?);
+        VALUES(?, ?, ?, ?, ?, ?);        
+    """;
+
+    public static final String UPDATE_USER_CURRENCY =
+    """
         UPDATE Utenti
         SET EarCoins = EarCoins + ?
-        WHERE Email = ?;        
+        WHERE Email = ?;     
     """;
 
     //OP06.1
     public static final String FIND_DISCOUNT =
     """
-        SELECT TOP(1) CodiceSconto
+        SELECT TOP(1) CodiceSconto, Percentuale
         FROM Sconti
         WHERE QuantitaMinima <= ?
         ORDER BY QuantitaMinima DESC
