@@ -83,8 +83,9 @@ public final class Testo {
     public final class DAO {
 
         private HashSet<Testo> searchBy(Connection connection, String searchQuery, String searchString) {
+            String upperString = searchString.toLowerCase();
             try (
-                var statement = DAOUtils.prepare(connection, searchQuery, searchString);
+                var statement = DAOUtils.prepare(connection, searchQuery, upperString);
                 var resultSet = statement.executeQuery();
             ) {
                 HashSet<Testo> testi = new HashSet<>();
@@ -101,6 +102,18 @@ public final class Testo {
             } catch(Exception e) {
                 throw new DAOException(e);
             }
+        }
+
+        public HashSet<Testo> searchByAuthor(Connection connection, final String author) {
+            return searchBy(connection, OperationQueries.SEARCH_BY_AUTHOR, author);
+        }
+
+        public HashSet<Testo> searchByGenre(Connection connection, final String genre) {
+            return searchBy(connection, OperationQueries.SEARCH_BY_GENRE, genre);
+        }
+
+        public HashSet<Testo> searchByGroup(Connection connection, final String group) {
+            return searchBy(connection, OperationQueries.SEARCH_BY_GROUP, group);
         }
     }
 }
