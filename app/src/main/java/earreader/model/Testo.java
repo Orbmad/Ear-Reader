@@ -115,5 +115,26 @@ public final class Testo {
         public HashSet<Testo> searchByGroup(Connection connection, final String group) {
             return searchBy(connection, OperationQueries.SEARCH_BY_GROUP, group);
         }
+
+        public HashSet<Testo> textRanking(Connection connection) {
+            try (
+                var statement = DAOUtils.prepare(connection, OperationQueries.TEXTS_RANKING);
+                var resultSet = statement.executeQuery();
+            ) {
+                HashSet<Testo> testi = new HashSet<>();
+                while(resultSet.next()) {
+                    testi.add(new Testo(resultSet.getInt("Testi.Codice"),
+                                        resultSet.getDate("Testi.Data"),
+                                        resultSet.getString("Testi.Titolo"),
+                                        resultSet.getBoolean("Testi.Singolo"),
+                                        resultSet.getString("Testi.Percorso"),
+                                        resultSet.getInt("Costo"),
+                                        resultSet.getString("Testi.NomeGenere")));
+                }
+                return testi;
+            } catch(Exception e) {
+                throw new DAOException(e);
+            }
+        }
     }
 }
