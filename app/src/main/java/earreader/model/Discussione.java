@@ -2,6 +2,7 @@ package earreader.model;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.util.HashSet;
 
 public class Discussione {
     private final String emailScrittore;
@@ -56,6 +57,26 @@ public class Discussione {
             ) {
                 statement.executeUpdate();
             } catch (Exception e) {
+                throw new DAOException(e);
+            }
+        }
+
+        public static HashSet<Discussione> discussionsRanking(Connection connection) {
+            try (
+                var statement = DAOUtils.prepare(connection, OperationQueries.DISCUSSIONS_RANKING);
+                var resultSet = statement.executeQuery();
+            ) {
+                HashSet<Discussione> discussions = new HashSet<>();
+                while(resultSet.next()) {
+                    discussions.add(new Discussione(resultSet.getString("Discussioni.Email"),
+                                            resultSet.getString("Discussioni.Titolo"),
+                                            resultSet.getDate("Discussioni.Data"),
+                                            resultSet.getString("Discussioni.Stringa"),
+                                            resultSet.getString("Discussioni.Argomento"),
+                                            0));
+                }
+                return discussions;
+            } catch(Exception e) {
                 throw new DAOException(e);
             }
         }
