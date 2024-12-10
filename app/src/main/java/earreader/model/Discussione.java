@@ -11,6 +11,22 @@ public class Discussione {
     private final String contenuto;
     private final String argomento;
     private int numeroCommenti;
+    private int posizione;
+
+    public int getPosizione() {
+        return posizione;
+    }
+
+    public Discussione(final String emailScrittore, final String titolo, final Date data, final String contenuto,
+            final String argomento, final int numeroCommenti, final int posizione) {
+        this.emailScrittore = emailScrittore;
+        this.titolo = titolo;
+        this.data = data;
+        this.contenuto = contenuto;
+        this.argomento = argomento;
+        this.numeroCommenti = numeroCommenti;
+        this.posizione = posizione;
+    }
 
     public Discussione(final String emailScrittore, final String titolo, final Date data, final String contenuto,
             final String argomento, final int numeroCommenti) {
@@ -20,6 +36,7 @@ public class Discussione {
         this.contenuto = contenuto;
         this.argomento = argomento;
         this.numeroCommenti = numeroCommenti;
+        this.posizione = 0;
     }
 
     public String getEmailScrittore() {
@@ -73,7 +90,8 @@ public class Discussione {
                                             resultSet.getDate("Discussioni.Data"),
                                             resultSet.getString("Discussioni.Stringa"),
                                             resultSet.getString("Discussioni.Argomento"),
-                                            0));
+                                            resultSet.getInt("Discussioni.NumeroCommenti"),
+                                            resultSet.getInt("Posizione")));
                 }
                 return discussions;
             } catch(Exception e) {

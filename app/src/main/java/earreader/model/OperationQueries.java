@@ -131,7 +131,7 @@ public class OperationQueries {
     //OP08
     public static final String TEXTS_RANKING =
     """
-        SELECT T.*
+        SELECT T.* ROW_NUMBER() OVER() AS Posizione
         FROM Testi T
         ORDER BY T.Voto DESC;        
     """;
@@ -139,7 +139,7 @@ public class OperationQueries {
     //OP09
     public static final String AUTHORS_RANKING =
     """
-        SELECT A.*
+        SELECT A.* ROW_NUMBER() OVER() AS Posizione
         FROM Autori A
         ORDER BY A.Punteggio DESC;        
     """;
@@ -147,7 +147,7 @@ public class OperationQueries {
     //OP10
     public static final String DISCUSSIONS_RANKING =
     """
-        SELECT D.*
+        SELECT D.* ROW_NUMBER() OVER() AS Posizione
         FROM Discussioni D
         ORDER BY D.NumeroCommenti DESC;        
     """;
