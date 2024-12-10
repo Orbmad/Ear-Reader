@@ -42,5 +42,23 @@ public final class Utente {
                 throw new DAOException(e);
             }
         }
+
+        public static String login(Connection connection, final String email, final String password) {
+            String LOGIN_QUERY = 
+            """
+                SELECT U.*
+                FROM Utenti U
+                WHERE U.Email = ?
+                AND U.Password = ?        
+            """;
+            try (
+                var statement = DAOUtils.prepare(connection, LOGIN_QUERY, email, password);
+                var resultSet = statement.executeQuery();
+            ) {
+                return resultSet.getString("Email");
+            } catch(Exception e) {
+                throw new DAOException(e);
+            }
+        }
     }
 }

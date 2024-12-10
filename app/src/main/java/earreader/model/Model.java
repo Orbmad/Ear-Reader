@@ -2,9 +2,8 @@ package earreader.model;
 
 public interface Model {
     
-    Utente getActualUser();
+    String getActualUser();
 
-    void setActualUser();
+    void login(final String emailUtente, final String passwordUtente);
 
-    
 }
