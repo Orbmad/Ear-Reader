@@ -43,7 +43,7 @@ public final class Utente {
             }
         }
 
-        public static String login(Connection connection, final String email, final String password) {
+        public static Utente login(Connection connection, final String email, final String password) {
             String LOGIN_QUERY = 
             """
                 SELECT U.*
@@ -55,7 +55,10 @@ public final class Utente {
                 var statement = DAOUtils.prepare(connection, LOGIN_QUERY, email, password);
                 var resultSet = statement.executeQuery();
             ) {
-                return resultSet.getString("Email");
+                return new Utente(resultSet.getString("Email"),
+                        resultSet.getString("Utenti.Password"),
+                        resultSet.getString("Utente.Nickname"),
+                        resultSet.getInt("Utente.EarCoins"));
             } catch(Exception e) {
                 throw new DAOException(e);
             }

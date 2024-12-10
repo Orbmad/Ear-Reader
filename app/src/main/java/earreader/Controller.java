@@ -20,8 +20,5 @@ public class Controller implements ControllerInterface{
     public void login(final String email, final String password) {
         model.login(email, password);
     }
-
-
-
     
 }

@@ -15,7 +15,7 @@ public final class Testo {
     private final int costo;
     private float voto;
     private final String genere;
-    private Optional<HashMap<Integer, Capitolo>> capitoli;
+    private Optional<HashMap<Integer, Capitolo>> capitoli; //TO ADD QUERIES.
     private int posizione;
 
     public class Capitolo {
@@ -101,7 +101,7 @@ public final class Testo {
 
     public final class DAO {
 
-        private HashSet<Testo> searchBy(Connection connection, String searchQuery, String searchString) {
+        private static HashSet<Testo> searchBy(Connection connection, String searchQuery, String searchString) {
             String upperString = searchString.toLowerCase();
             try (
                     var statement = DAOUtils.prepare(connection, searchQuery, upperString);
@@ -123,19 +123,19 @@ public final class Testo {
             }
         }
 
-        public HashSet<Testo> searchByAuthor(Connection connection, final String author) {
+        public static HashSet<Testo> searchByAuthor(Connection connection, final String author) {
             return searchBy(connection, OperationQueries.SEARCH_BY_AUTHOR, author);
         }
 
-        public HashSet<Testo> searchByGenre(Connection connection, final String genre) {
+        public static HashSet<Testo> searchByGenre(Connection connection, final String genre) {
             return searchBy(connection, OperationQueries.SEARCH_BY_GENRE, genre);
         }
 
-        public HashSet<Testo> searchByGroup(Connection connection, final String group) {
+        public static HashSet<Testo> searchByGroup(Connection connection, final String group) {
             return searchBy(connection, OperationQueries.SEARCH_BY_GROUP, group);
         }
 
-        public HashSet<Testo> textRanking(Connection connection) {
+        public static HashSet<Testo> textRanking(Connection connection) {
             try (
                     var statement = DAOUtils.prepare(connection, OperationQueries.TEXTS_RANKING);
                     var resultSet = statement.executeQuery();) {
@@ -157,7 +157,7 @@ public final class Testo {
             }
         }
 
-        public HashSet<Testo> suggested(Connection connection, final String userEmail) {
+        public static HashSet<Testo> suggested(Connection connection, final String userEmail) {
             try (
                     var statement = DAOUtils.prepare(connection, OperationQueries.SUGGESTED_TEXTS, userEmail);
                     var resultSet = statement.executeQuery();) {
