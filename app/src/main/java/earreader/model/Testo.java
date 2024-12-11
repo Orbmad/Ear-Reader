@@ -15,23 +15,8 @@ public final class Testo {
     private final int costo;
     private float voto;
     private final String genere;
-    private Optional<HashMap<Integer, Capitolo>> capitoli; //TO ADD QUERIES.
+    private Optional<HashMap<Integer, Capitolo>> capitoli; // TO ADD QUERIES.
     private int posizione;
-
-    public class Capitolo {
-        public final int codiceTesto;
-        public final Optional<Date> data;
-        public final String percorsoCapitolo;
-        public final String titolo;
-
-        public Capitolo(final int codiceTesto, final Optional<Date> data, final String percorsoCapitolo,
-                final String titolo) {
-            this.codiceTesto = codiceTesto;
-            this.data = data;
-            this.percorsoCapitolo = percorsoCapitolo;
-            this.titolo = titolo;
-        }
-    }
 
     public Testo(final int codiceTesto, final Date data, final String titolo, final boolean singolo,
             final String percorso, final int costo, final String genere, final float voto, final int posizione) {
@@ -57,6 +42,10 @@ public final class Testo {
         this.genere = genere;
         this.voto = voto;
         this.posizione = 0;
+    }
+
+    public void setChapters(final HashMap<Integer, Capitolo> capitoli) {
+        this.capitoli = Optional.of(capitoli);
     }
 
     public int getCodiceTesto() {
@@ -117,6 +106,9 @@ public final class Testo {
                             resultSet.getString("Testi.NomeGenere"),
                             resultSet.getFloat("Voto")));
                 }
+                for (Testo testo : testi) {
+                    testo.setChapters(buildChapters(connection, testo.getCodiceTesto()));
+                }
                 return testi;
             } catch (Exception e) {
                 throw new DAOException(e);
@@ -151,6 +143,9 @@ public final class Testo {
                             resultSet.getFloat("Voto"),
                             resultSet.getInt("Posizione")));
                 }
+                for (Testo testo : testi) {
+                    testo.setChapters(buildChapters(connection, testo.getCodiceTesto()));
+                }
                 return testi;
             } catch (Exception e) {
                 throw new DAOException(e);
@@ -172,7 +167,35 @@ public final class Testo {
                             resultSet.getString("Testi.NomeGenere"),
                             resultSet.getFloat("Voto")));
                 }
+                for (Testo testo : testi) {
+                    testo.setChapters(buildChapters(connection, testo.getCodiceTesto()));
+                }
                 return testi;
+            } catch (Exception e) {
+                throw new DAOException(e);
+            }
+        }
+
+        private static HashMap<Integer, Capitolo> buildChapters(Connection connection, final int codiceTesto) {
+            HashMap<Integer, Capitolo> capitoli = new HashMap<>();
+            String GET_CHAPTERS = """
+                        SELECT C.*
+                        FROM Capitoli C
+                        WHERE C.CodiceTesto = ?
+                        ORDER BY C.Numero ASC;
+                    """;
+            try (
+                    var statement = DAOUtils.prepare(connection, GET_CHAPTERS, codiceTesto);
+                    var resultSet = statement.executeQuery();) {
+                while (resultSet.next()) {
+                    capitoli.put(resultSet.getInt("Capitoli.Numero"),
+                            new Capitolo(codiceTesto,
+                                    resultSet.getInt("Capitoli.NumeroCapitolo"),
+                                    resultSet.getDate("Capitoli.Data"),
+                                    resultSet.getString("Capitoli.PercorsoCapitolo"),
+                                    resultSet.getString("Capitoli.Titolo")));
+                }
+                return capitoli;
             } catch (Exception e) {
                 throw new DAOException(e);
             }
