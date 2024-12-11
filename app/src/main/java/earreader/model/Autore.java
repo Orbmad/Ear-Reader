@@ -49,7 +49,7 @@ public class Autore {
 
     public final class DAO {
 
-        public HashSet<Autore> authorsRanking(Connection connection) {
+        public static HashSet<Autore> authorsRanking(Connection connection) {
             try (
                     var statement = DAOUtils.prepare(connection, OperationQueries.AUTHORS_RANKING);
                     var resultSet = statement.executeQuery();) {

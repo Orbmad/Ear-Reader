@@ -1,6 +1,7 @@
 package earreader.model;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,13 +9,10 @@ public class ModelImpl implements Model {
 
     private final Connection connection;
     private Optional<Utente> utente;
-    private Optional<List<Discussione>> discussioni;
-    private Optional<List<Testo>> testi;
-    private Optional<List<Pagamento>> pagamenti;
-    private Optional<List<Recensione>> recensioni;
- 
+
     public ModelImpl() {
         this.connection = DAOUtils.MySQLConnection("Earreader", "root", "");
+        this.utente = Optional.empty();
     }
 
     @Override
@@ -23,33 +21,17 @@ public class ModelImpl implements Model {
     }
 
     @Override
+    public boolean isUserLogged() {
+        return utente.isPresent();
+    }
+
+    @Override
     public void login(final String emailUtente, final String passwordUtente) {
         final Utente user;
         user = Utente.DAO.login(connection, emailUtente, passwordUtente);
         this.utente = Optional.of(user);
     }
-
-
-    public void resetUser() {
-        this.utente = Optional.empty();
-    }
-
-    public void resetDiscussions() {
-        this.discussioni = Optional.empty();
-    }
-
-    public void resetTexts() {
-        this.testi = Optional.empty();
-    }
-
-    public void resetPayments() {
-        this.testi = Optional.empty();
-    }
-
-    public void resetReviews() {
-        this.recensioni = Optional.empty();
-    }
-
+    
     @Override
     public List<Testo> searchBy(final String search, final SearchBy type) {
         if (type.equals(SearchBy.AUTHOR)) {
@@ -69,6 +51,44 @@ public class ModelImpl implements Model {
     @Override
     public List<Testo> getSuggestedTexts() {
         return Testo.DAO.suggested(connection, utente.get().getEmail()).stream().toList();
+    }
+
+    @Override
+    public void buyChapter(Capitolo chapter) {
+        AcquistiCap.DAO.buyChapter(connection, chapter.getNumeroCapitolo(), chapter.getCodiceTesto(),
+                utente.get().getEmail());
+    }
+
+    @Override
+    public List<Autore> authorsRanking() {
+        return Autore.DAO.authorsRanking(connection).stream().toList();
+    }
+
+    @Override
+    public void newComment(String emailDisussione, String titoloDiscussione, int codice, String contenuto) {
+
+        Commento.DAO.newComment(connection, emailDisussione, titoloDiscussione, codice,
+                new Date(System.currentTimeMillis()), contenuto, utente.get().getEmail());
+    }
+
+    @Override
+    public void addLike(final Commento commento, final boolean like) {
+        Commento.DAO.addLike(connection, commento, utente.get().getEmail(), like);
+    }
+
+    @Override
+    public void newDiscussion(String titolo, String contenuto, String argomento) {
+        Discussione.DAO.newDiscussion(connection, utente.get().getEmail(), titolo, new Date(System.currentTimeMillis()), contenuto, argomento);
+    }
+
+    @Override
+    public List<Discussione> discussionsRanking() {
+        return Discussione.DAO.discussionsRanking(connection).stream().toList();
+    }
+
+    @Override
+    public List<Commento> getCommentsFromDiscussion(Discussione discussione) {
+        return Discussione.DAO.getComments(connection, discussione).stream().toList();
     }
 
 }

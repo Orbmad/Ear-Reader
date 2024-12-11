@@ -58,5 +58,21 @@ public class Commento {
                 throw new DAOException(e);
             }
         }
+
+        public static void addLike(Connection connection, final Commento commento, final String emailUtente,
+                final boolean like) {
+            String ADD_LIKE = """
+                        INSERT INTO Valutazioni(EmailUtente, Email, Titolo, Codice, MiPiace)
+                        VALUES (?, ?, ?, ?, ?)
+                    """;
+            try (
+                    var statement = DAOUtils.prepare(connection, ADD_LIKE, emailUtente, commento.getEmailDisussione(),
+                            commento.getTitoloDiscussione(), commento.getCodice(), like);
+                ) {
+                statement.executeUpdate();
+            } catch (Exception e) {
+                throw new DAOException(e);
+            }
+        }
     }
 }

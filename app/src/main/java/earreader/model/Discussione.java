@@ -65,13 +65,12 @@ public class Discussione {
 
     public final class DAO {
 
-        public static void newTopic(Connection connection, final String emailScrittore, final String titolo,
+        public static void newDiscussion(Connection connection, final String emailScrittore, final String titolo,
                 final Date data, final String contenuto,
-                final String argomento, final int numeroCommenti) {
+                final String argomento) {
             try (
                     var statement = DAOUtils.prepare(connection, OperationQueries.NEW_TOPIC, emailScrittore, titolo,
-                            data, contenuto, argomento, 0);
-            ) {
+                            data, contenuto, argomento, 0);) {
                 statement.executeUpdate();
             } catch (Exception e) {
                 throw new DAOException(e);
@@ -80,20 +79,46 @@ public class Discussione {
 
         public static HashSet<Discussione> discussionsRanking(Connection connection) {
             try (
-                var statement = DAOUtils.prepare(connection, OperationQueries.DISCUSSIONS_RANKING);
-                var resultSet = statement.executeQuery();
-            ) {
+                    var statement = DAOUtils.prepare(connection, OperationQueries.DISCUSSIONS_RANKING);
+                    var resultSet = statement.executeQuery();) {
                 HashSet<Discussione> discussions = new HashSet<>();
-                while(resultSet.next()) {
+                while (resultSet.next()) {
                     discussions.add(new Discussione(resultSet.getString("Discussioni.Email"),
-                                            resultSet.getString("Discussioni.Titolo"),
-                                            resultSet.getDate("Discussioni.Data"),
-                                            resultSet.getString("Discussioni.Stringa"),
-                                            resultSet.getString("Discussioni.Argomento"),
-                                            resultSet.getInt("Discussioni.NumeroCommenti"),
-                                            resultSet.getInt("Posizione")));
+                            resultSet.getString("Discussioni.Titolo"),
+                            resultSet.getDate("Discussioni.Data"),
+                            resultSet.getString("Discussioni.Stringa"),
+                            resultSet.getString("Discussioni.Argomento"),
+                            resultSet.getInt("Discussioni.NumeroCommenti"),
+                            resultSet.getInt("Posizione")));
                 }
                 return discussions;
+            } catch (Exception e) {
+                throw new DAOException(e);
+            }
+        }
+
+        public static HashSet<Commento> getComments(Connection connection, final Discussione discussione) {
+            HashSet<Commento> commenti = new HashSet<>();
+            String GET_COMMENTS =
+            """
+                SELECT C*
+                FROM Commenti C
+                WHERE C.Email = ?
+                AND C.Titolo = ?;        
+            """;
+            try (
+                var statement = DAOUtils.prepare(connection, GET_COMMENTS, discussione.getEmailScrittore(), discussione.getTitolo());
+                var resultSet = statement.executeQuery();  
+            ) {
+                while (resultSet.next()) {
+                    commenti.add(new Commento(discussione.getEmailScrittore(),
+                            discussione.getTitolo(),
+                            resultSet.getInt("Commenti.Codice"),
+                            resultSet.getDate("Commenti.Data"),
+                            resultSet.getString("Commenti.Contenuto"),
+                            resultSet.getString("Commenti.EmailUtente")));
+                }
+                return commenti;
             } catch(Exception e) {
                 throw new DAOException(e);
             }
