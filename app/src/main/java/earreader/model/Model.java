@@ -16,6 +16,8 @@ public interface Model {
 
     void updateLogin();
 
+    void newUser(final String email, final String nickname, final String password);
+
     List<Testo> searchBy(final String search, final SearchBy type);
 
     List<Testo> textRanking();

@@ -38,6 +38,11 @@ public class ModelImpl implements Model {
     }
 
     @Override
+    public void newUser(final String email, final String nickname, final String password) {
+        Utente.DAO.newUser(connection, email, nickname, password);
+    }
+
+    @Override
     public List<Testo> searchBy(final String search, final SearchBy type) {
         if (type.equals(SearchBy.AUTHOR)) {
             return Testo.DAO.searchByAuthor(connection, search).stream().toList();
