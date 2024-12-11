@@ -82,8 +82,8 @@ public class OperationQueries {
     //OP06
     public static final String BUY_NEW_CURRENCY =
     """
-        INSERT INTO Pagamenti(CodicePagamento, Email, Data, EarCoins, CodiceMetodo, CodiceSconto)
-        VALUES(?, ?, ?, ?, ?, ?);        
+        INSERT INTO Pagamenti(Email, Data, EarCoins, CodiceMetodo, CodiceSconto)
+        VALUES(?, ?, ?, ?, ?);        
     """;
 
     public static final String UPDATE_USER_CURRENCY =

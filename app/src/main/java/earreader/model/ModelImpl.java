@@ -31,7 +31,12 @@ public class ModelImpl implements Model {
         user = Utente.DAO.login(connection, emailUtente, passwordUtente);
         this.utente = Optional.of(user);
     }
-    
+
+    @Override
+    public void updateLogin() {
+        login(utente.get().getEmail(), utente.get().getPassword());
+    }
+
     @Override
     public List<Testo> searchBy(final String search, final SearchBy type) {
         if (type.equals(SearchBy.AUTHOR)) {
@@ -78,7 +83,8 @@ public class ModelImpl implements Model {
 
     @Override
     public void newDiscussion(String titolo, String contenuto, String argomento) {
-        Discussione.DAO.newDiscussion(connection, utente.get().getEmail(), titolo, new Date(System.currentTimeMillis()), contenuto, argomento);
+        Discussione.DAO.newDiscussion(connection, utente.get().getEmail(), titolo, new Date(System.currentTimeMillis()),
+                contenuto, argomento);
     }
 
     @Override
@@ -87,8 +93,26 @@ public class ModelImpl implements Model {
     }
 
     @Override
-    public List<Commento> getCommentsFromDiscussion(Discussione discussione) {
+    public List<Commento> getCommentsFromDiscussion(final Discussione discussione) {
         return Discussione.DAO.getComments(connection, discussione).stream().toList();
+    }
+
+    @Override
+    public void addPayment(final int valutaAcquistata, final int codiceMetodoPagamento) {
+        ValoriSconto valoriSconto = Pagamento.DAO.findDiscount(connection, valutaAcquistata);
+        int costoFinale = (valutaAcquistata / 100) * (100 - valoriSconto.percentualeSconto()) / 100;
+        Pagamento.DAO.addPayment(connection, utente.get().getEmail(), new Date(System.currentTimeMillis()),
+                valutaAcquistata, costoFinale, codiceMetodoPagamento, valoriSconto.codiceSconto());
+    }
+
+    @Override
+    public List<Recensione> getReviewsOfText(Testo testo) {
+        return Testo.DAO.getReviews(connection, testo.getCodiceTesto()).stream().toList();
+    }
+
+    @Override
+    public void newReview(int codiceTesto, int voto, String titolo, String contenuto) {
+        Recensione.DAO.newReview(connection, utente.get().getEmail(), codiceTesto, voto, titolo, contenuto);
     }
 
 }

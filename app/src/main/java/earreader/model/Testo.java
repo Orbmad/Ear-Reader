@@ -200,5 +200,30 @@ public final class Testo {
                 throw new DAOException(e);
             }
         }
+
+        public static HashSet<Recensione> getReviews(Connection connection, final int codiceTesto) {
+            HashSet<Recensione> recensioni = new HashSet<>();
+            String GET_REVIEWS =
+            """
+                SELECT R.*
+                FROM Recensioni R
+                WHERE R.CodiceTesto = ?;
+            """;
+            try (
+                var statement = DAOUtils.prepare(connection, GET_REVIEWS, codiceTesto);
+                var resultSet = statement.executeQuery();
+            ) {
+                while (resultSet.next()) {
+                    recensioni.add(new Recensione(resultSet.getString("Recensioni.Email"),
+                            resultSet.getInt("Recensioni.CodiceTesto"),
+                            resultSet.getInt("Recensioni.Voto"),
+                            resultSet.getString("Recensioni.Titolo"),
+                            resultSet.getString("Recensioni.Stringa")));
+                }
+                return recensioni;
+            } catch(Exception e) {
+                throw new DAOException(e);
+            }
+        }
     }
 }

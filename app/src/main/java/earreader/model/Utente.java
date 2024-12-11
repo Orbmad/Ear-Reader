@@ -27,6 +27,10 @@ public final class Utente {
         return this.coins;
     }
 
+    public String getPassword() {
+        return this.password;
+    }
+
     public boolean comparePassword(final String pwd) {
         return this.password.equals(pwd);
     }

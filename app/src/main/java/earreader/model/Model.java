@@ -14,11 +14,15 @@ public interface Model {
 
     void login(final String emailUtente, final String passwordUtente);
 
+    void updateLogin();
+
     List<Testo> searchBy(final String search, final SearchBy type);
 
     List<Testo> textRanking();
 
     List<Testo> getSuggestedTexts();
+
+    List<Recensione> getReviewsOfText(final Testo testo);
 
     void buyChapter(final Capitolo chapter);
 
@@ -34,5 +38,10 @@ public interface Model {
     List<Discussione> discussionsRanking();
 
     List<Commento> getCommentsFromDiscussion(final Discussione discussione);
+
+    void addPayment(final int valutaAcquistata, final int codiceMetodoPagamento);
+
+    void newReview(final int codiceTesto,
+            final int voto, final String titolo, final String contenuto);
 
 }

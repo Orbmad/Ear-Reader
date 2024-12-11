@@ -53,11 +53,11 @@ public final class Pagamento {
 
     public final class DAO {
 
-        public static void addPayment(Connection connection, final int codicePagamento, final String emailUtente,
+        public static void addPayment(Connection connection, final String emailUtente,
                 final Date data, final int valutaAcquistata, final int costo,
                 final int codiceMetodoPagamento, final int codiceSconto) {
             try (
-                    var statement1 = DAOUtils.prepare(connection, OperationQueries.BUY_NEW_CURRENCY, codicePagamento,
+                    var statement1 = DAOUtils.prepare(connection, OperationQueries.BUY_NEW_CURRENCY,
                             emailUtente, data, valutaAcquistata, costo, codiceMetodoPagamento, codiceSconto);
                     var statement2 = DAOUtils.prepare(connection, OperationQueries.UPDATE_USER_CURRENCY,
                             valutaAcquistata, emailUtente);
